@@ -27,10 +27,16 @@ class INewsPortlet(collection.ICollectionPortlet):
     """
     Define your portlet schema here
     """
-    pass
+
+    image_width = schema.Int(title=_(u'Image Width'), default=200)
+    image_height = schema.Int(title=_(u'Height'), default=200)
 
 class Assignment(base.Assignment):
     implements(INewsPortlet)
+
+    image_width = 200
+    image_height = 200
+
 
     def __init__(self, **kwargs):
         for k, v in kwargs.items():
@@ -38,7 +44,7 @@ class Assignment(base.Assignment):
 
     @property
     def title(self):
-        return _('News Portlet')
+        return self.header
 
 class Renderer(collection.Renderer):
     
@@ -48,13 +54,24 @@ class Renderer(collection.Renderer):
     def available(self):
         return True
 
+    def get_image_url(self, brain):
+        obj = brain.getObject()
+        scales = obj.restrictedTraverse('@@images')
+        image = scales.scale('image', width=self.data.image_width,
+                                    height=self.data.image_height)
+        if image:
+            return image.url
+        else:
+            return 'http://placehold.it/%sx%s' % (
+                    self.data.image_width,
+                    self.data.image_height
+            )
+
+
 class AddForm(collection.AddForm):
 
     form_fields = form.Fields(INewsPortlet)
     form_fields['target_collection'].custom_widget = UberSelectionWidget
-    # hide these fields from collectionportlet, we dont need these here
-    form_fields = form_fields.omit('random', 'show_more', 'show_dates')
-
 
     label = _(u"Add News Portlet")
     description = _(u"Basic news portlet with image")
@@ -66,9 +83,6 @@ class EditForm(collection.EditForm):
 
     form_fields = form.Fields(INewsPortlet)
     form_fields['target_collection'].custom_widget = UberSelectionWidget
-    # hide these fields from collectionportlet, we dont need these here
-    form_fields = form_fields.omit('random', 'show_more', 'show_dates')
-
 
     label = _(u"Edit News Portlet")
     description = _(u"Basic news portlet with image")

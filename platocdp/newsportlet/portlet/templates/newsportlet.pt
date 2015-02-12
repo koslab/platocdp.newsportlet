@@ -1,9 +1,8 @@
-<dl class="portlet portletNewsPortlet"
+<dl class="portlet portletNewsImagePortlet"
     i18n:domain="platocdp.newsportlet"
     tal:define="collection_url view/collection_url;
                 plone_view context/@@plone;
-                toLocalizedTime nocall:plone_view/toLocalizedTime;
-                getIcon nocall:plone_view/getIcon;">
+                toLocalizedTime nocall:plone_view/toLocalizedTime;">
 
     <dt class="portletHeader">
         <span class="portletTopLeft"></span>
@@ -14,14 +13,16 @@
     </dt>
 
     <tal:loop tal:repeat="obj view/results">
-    <dd class="portletItem"
+        <dd class="portletItem"
+            style="text-align:center"
         tal:define="oddrow repeat/obj/odd;
-                    item_icon python:getIcon(obj);"
+                    image_url python:view.get_image_url(obj);"
         tal:attributes="class python:oddrow and 'portletItem even' or 'portletItem odd'">
         <a href="#"
            class="tile"
            tal:attributes="href obj/getURL;">
-            <img tal:replace="structure item_icon/html_tag" />
+            <img tal:attributes="src image_url" tal:condition="image_url"/>
+            <br/>
             <span tal:replace="obj/pretty_title_or_id">
              Title
             </span>
