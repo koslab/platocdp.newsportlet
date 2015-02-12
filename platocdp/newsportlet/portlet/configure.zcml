@@ -5,5 +5,13 @@
 
     <include package="plone.app.portlets" file="permissions.zcml"/>
     <!-- -*- extra stuff goes here -*- -->
+    <plone:portlet
+        name="platocdp.newsportlet.portlet.NewsPortlet"
+        interface=".newsportlet.INewsPortlet"
+        assignment=".newsportlet.Assignment"
+        renderer=".newsportlet.Renderer"
+        addview=".newsportlet.AddForm"
+        editview=".newsportlet.EditForm"
+        />
 
 </configure>
